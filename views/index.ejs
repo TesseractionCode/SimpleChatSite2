@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Chat Corner</title>
+    <script src="./index.js" defer></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="message-output">
+        <% message_data.getMessagesSync().forEach(msg_obj => { %>
+        <%= `${msg_obj.username}: ${msg_obj.message_text}` %><br />
+        <% }); %>
+    </div>
+    <div class="panel">
+        <input id="username-input" type="text" placeholder="Username">
+        <textarea id="message-input" name="Message" id="" cols="300" rows="5" placeholder="Your Message"></textarea>
+        <button id="send-button">Send</button>
+    </div>
+</body>
+</html>

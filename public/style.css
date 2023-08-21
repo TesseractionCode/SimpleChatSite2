@@ -1,0 +1,35 @@
+body {
+    background-color: black;
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+body div {
+    display: inline-block;
+}
+
+#message-output {
+    padding: 10px;
+    background-color: rgb(221, 221, 221);
+    flex-grow: 1;
+    overflow-y: scroll;
+}
+
+.panel {
+    background-color: rgb(102, 102, 102);
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: start;
+}
+
+#message-input {
+    resize: none;
+}
+
+#username-input {
+    max-width: 300px;
+    min-width: 65px;
+}
