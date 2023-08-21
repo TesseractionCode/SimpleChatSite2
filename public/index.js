@@ -60,6 +60,13 @@ function verifyAndSubmitMessageFields() {
     // Try to submit the message to the server.
     return new Promise((resolve, reject) => {
         submitMessage(username, message_text).then(res => {
+            if (res.status === 429) {
+                // Too many requests
+                message_output.innerHTML += `[WARNING]: Too fast! Slow Down!<br/>`;
+                message_output.scrollTo(0, message_output.scrollHeight);
+                resolve(false);
+                return;
+            }
             res.text().then(res_msg => {
                 if (res_msg === "Valid-Message") {
                     message_input.value = "";
@@ -90,7 +97,7 @@ trySetUsernameFromCookie();
 
 // Submit messages based on appropriate inputs
 send_button.addEventListener("click", () => {
-    verifyAndSubmitMessageFields();
+    verifyAndSubmitMessageFields()
 });
 message_input.addEventListener("keypress", ev => {
     if ((ev.key === "Enter") && (!ev.shiftKey)) {

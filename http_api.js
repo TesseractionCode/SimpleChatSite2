@@ -1,5 +1,6 @@
 const express = require("express");
 const ejs = require("ejs");
+const rateLimit = require('express-rate-limit')
 const cookieParser = require("cookie-parser");
 const message_data = require("./message_data.js");
 
@@ -29,6 +30,8 @@ function createAndSubmitMessage(username, message_text, wss) {
 }
 
 function handleHTTPSRequests(app, wss) {
+
+
     // Send the website on intial connection
     app.get("/", (req, res) => {
         //res.sendFile("views/index.html", {root: __dirname});
@@ -36,8 +39,14 @@ function handleHTTPSRequests(app, wss) {
             message_data: message_data
         });
     });
-    // Accept messages submitted from clients
-    app.post("/message", (req, res) => {
+    // Accept messages submitted from clients with a rate limit
+    const messageLimiter = rateLimit({
+        windowMs: 3 * 1000, // 3 seconds
+        max: 15, // 15 every 3 seconds
+        message:
+            'Too many accounts created from this IP, please try again after an hour'
+    });
+    app.post("/message", messageLimiter, (req, res) => {
         const username = req.body.username.trim();
         const message_text = req.body.message_text.trim();
         // Invalidate the username if it does not fit minimum message standards
