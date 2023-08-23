@@ -8,13 +8,10 @@ const username_input = document.querySelector("#username-input");
 const message_input = document.querySelector("#message-input");
 const send_button = document.querySelector("#send-button");
 
-message_output.scrollTo(0, message_output.scrollHeight);
-
-ws.onmessage = (msg) => {
-    const msg_obj = JSON.parse(msg.data);
-    message_output.innerHTML += `${msg_obj.username}: ${msg_obj.message_text}<br/>`;
-    message_output.scrollTo(0, message_output.scrollHeight);
-};
+/**Stores a list of messages that are currently loaded into the client*/
+const loaded_messages = [];
+/**Number of messages to load at a time.*/
+const LOAD_STEP_SIZE = 50;
 
 /**Makes an HTTP request to the server's HTTP API with the
  * using the given options.
@@ -92,6 +89,90 @@ function trySetUsernameFromCookie() {
     }
 }
 
+/**Returns a list of message objects from the server that are positioned
+ * around the index of the center_index given. Ex. a center_index of 10
+ * and a num_messages of 5 will give messages with indices 3-7 (5 messages).
+ * If messages above index 5 don't exist on the server, it would return only
+ * 3 messages.
+*/
+async function getMessagesAroundIndex(center_index, num_messages) {
+    const message_objs = (await ((await makeHTTPRequest(`message-set/${center_index}/${num_messages}`)).json())).message_set;
+    return message_objs;
+}
+
+/**Get a set of the last messages that the server has on record and then load them.
+ * The set count is determined by the server.
+*/
+async function loadLastMessages(num_messages) {
+    const last_msg_idx = (await ((await makeHTTPRequest("message-count")).json())).message_count - 1;
+    const last_messages = await getMessagesAroundIndex(last_msg_idx, num_messages*2);
+    loadMessages(last_messages);
+}
+
+/**Render all client-loaded messages onto the message-output*/
+function renderLoadedMessages(scroll_to_bottom=false) {
+    message_output.innerHTML = "";
+    loaded_messages.forEach(msg_obj => {
+        message_output.innerHTML += `${msg_obj.username}: ${msg_obj.message_text}<br/><br/>`;
+    });
+    if (scroll_to_bottom) message_output.scrollTo(0, message_output.scrollHeight);
+}
+
+/**Load a message object to client side (keeps track of messages sent to client) */
+function loadMessage(msg_obj, push_to_beginning=false) {
+    if (push_to_beginning) {
+        loaded_messages.unshift(msg_obj);
+    } else {
+        loaded_messages.push(msg_obj);
+    }
+}
+
+/**Load an array of message objects to client side (keeps track of messages sent to client) */
+function loadMessages(msg_objs, push_to_beginning=false) {
+    if (push_to_beginning) {
+        msg_objs = msg_objs.toReversed();
+    }
+    msg_objs.forEach(msg_obj => {
+        loadMessage(msg_obj, push_to_beginning);
+    });
+}
+
+// Load and render incoming messages
+ws.onmessage = (msg) => {
+    const msg_obj = JSON.parse(msg.data);
+    loadMessage(msg_obj);
+    renderLoadedMessages(scroll_to_bottom=true);
+};
+
+// Load more messages when the user scrolls to the top of the message output and then render them
+message_output.addEventListener("scroll", async () => {
+    if ((message_output.scrollTop !== 0) || (loaded_messages.length === 0)) return;
+    const oldest_idx = loaded_messages[0].index;
+    var old_messages = await getMessagesAroundIndex(oldest_idx - Math.round(LOAD_STEP_SIZE/2) + 1, LOAD_STEP_SIZE);
+    
+    // Get rid of old messages with an index equal to or above the oldest loaded one
+    let overlapping_idx;
+    old_messages.forEach((msg_obj, i) => {
+        if (msg_obj.index === oldest_idx) {
+            overlapping_idx = i;
+        }
+    });
+    if (overlapping_idx != undefined) {
+        old_messages = old_messages.slice(0, overlapping_idx);
+    }
+
+    loadMessages(old_messages, push_to_beginning=true);
+    const old_scrollHeight = message_output.scrollHeight;
+    renderLoadedMessages(scroll_to_bottom=false);
+    const new_scrollHeight = message_output.scrollHeight;
+    const output_growth = new_scrollHeight - old_scrollHeight;
+    message_output.scrollTop += output_growth;
+});
+
+// Render the last messages that the server has record of
+loadLastMessages(num_messages=LOAD_STEP_SIZE).then(() => {
+    renderLoadedMessages(scroll_to_bottom=true);
+});
 // Set the username field if the user has a cookie for it
 trySetUsernameFromCookie();
 

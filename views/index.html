@@ -10,9 +10,7 @@
 </head>
 <body>
     <div id="message-output">
-        <% message_data.getMessagesSync().forEach(msg_obj => { %>
-        <%= `${msg_obj.username}: ${msg_obj.message_text}` %><br />
-        <% }); %>
+        
     </div>
     <div class="panel">
         <input id="username-input" type="text" placeholder="Username">
