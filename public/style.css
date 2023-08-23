@@ -98,6 +98,7 @@ button:hover {
     flex-grow: 1;
     flex-basis: 0;
     overflow-y: scroll;
+    overflow-x: hidden;
     padding: .5rem;
     padding-bottom: 6rem;
 }
@@ -131,6 +132,7 @@ button:hover {
     border: 0;
     height: 2rem;
     padding: .5rem;
+    font-size: 1rem;
 }
 
 .submission-widget textarea {
@@ -163,7 +165,7 @@ button:hover {
     margin-right: .2rem;
     font-size: 1.2rem;
     font-weight: 700;
-    text-shadow: rgba(85, 190, 252, 0.363) 1px 1px 1px;
+    text-shadow: rgba(149, 207, 255, 0.384) 1px 1px 1px;
 }
 
 .message-text {

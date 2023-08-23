@@ -89,8 +89,9 @@ function getCookie(name) {
 }
 
 function trySetUsernameFromCookie() {
-    const cookie_username = getCookie("username");
+    var cookie_username = getCookie("username");
     if (cookie_username) {
+        cookie_username = cookie_username.replace("%20", " ");
         username_input.value = cookie_username;
     }
 }
@@ -147,6 +148,13 @@ function loadMessages(msg_objs, push_to_beginning=false) {
         loadMessage(msg_obj, push_to_beginning);
     });
 }
+
+// Stop zooming in and out on mobile
+document.addEventListener("touchmove", function(event) {
+    if (event.touches.length > 1) {
+        event.preventDefault(); // Prevent zooming and panning
+    }
+}, { passive: false });
 
 // Load and render incoming messages
 ws.onmessage = (msg) => {
