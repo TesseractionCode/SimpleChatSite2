@@ -54,6 +54,12 @@ function submitMessage(username, message_text) {
 function verifyAndSubmitMessageFields() {
     const username = username_input.value;
     const message_text = message_input.value;
+
+    // Alert if no username
+    if (username === "") {
+        alert("Make sure you specify a username at the top of the page first!");
+    }
+
     // Try to submit the message to the server.
     return new Promise((resolve, reject) => {
         submitMessage(username, message_text).then(res => {
@@ -113,7 +119,12 @@ async function loadLastMessages(num_messages) {
 function renderLoadedMessages(scroll_to_bottom=false) {
     message_output.innerHTML = "";
     loaded_messages.forEach(msg_obj => {
-        message_output.innerHTML += `${msg_obj.username}: ${msg_obj.message_text}<br/><br/>`;
+        // message_output.innerHTML += `${msg_obj.username}: ${msg_obj.message_text}<br/><br/>`;
+        message_output.innerHTML += `
+            <div class="message">
+                <span class="username">${msg_obj.username}:</span><span class="message-text">${msg_obj.message_text}</span>
+            </div></br>
+        `
     });
     if (scroll_to_bottom) message_output.scrollTo(0, message_output.scrollHeight);
 }
