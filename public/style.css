@@ -38,7 +38,7 @@ button:hover {
 }
 
 .website-header {
-    background: rgb(37, 41, 44);
+    background: rgb(26, 26, 26);
     height: 3rem;
 
     display: flex;
@@ -59,14 +59,15 @@ button:hover {
 
 .brand-title {
     display: inline-block;
-    color: #6d6d6d;
+    color: #e4e4e4;
+    text-shadow: whitesmoke 1px 1px 3px;
     margin-left: 5px;
 }
 
 .brand-container img {
     box-sizing: content-box;
     height: 100%;
-    filter: invert(35%) sepia(0%) saturate(1%) hue-rotate(349deg) brightness(93%) contrast(85%);
+    filter: invert(41%) sepia(98%) saturate(4118%) hue-rotate(327deg) brightness(94%) contrast(108%);
 }
 
 .centered-input {
@@ -76,7 +77,7 @@ button:hover {
     text-align: center;
     border-radius: 1em;
 
-    border: solid 2px #afafafda;
+    border: solid 2px #646464;
     background: var(--secondary-light);
 }
 
@@ -120,8 +121,8 @@ button:hover {
     width: 70%;
     border-radius: 2rem;
     overflow: hidden;
-    border: 2px solid rgb(203, 207, 211);
-    box-shadow: 2px 2px 10px rgb(54, 34, 37);
+    border: 2px solid rgb(170, 173, 177);
+    box-shadow: 2px 2px 15px rgb(49, 49, 49);
 }
 
 .submission-widget * {
@@ -140,15 +141,18 @@ button:hover {
 .submission-widget button {
     height: auto;
     vertical-align: middle;
-    background: rgb(225, 228, 235);
+    background: #252525;
+    color: whitesmoke
 }
 
 .message {
     font-size: 1rem;
     background-color: #fa2d59da;
+    background: radial-gradient(#ff446cda, #fa2d59da);
     color:rgb(26, 30, 32)f;
     padding: .7rem;
     border-radius: 1.2rem;
+    border: dashed #1b1b1bda 2px;
     margin-bottom: .5rem;
 }
 
